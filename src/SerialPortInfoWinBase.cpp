@@ -7,6 +7,7 @@
 #define PHYSICAL_ADDRESS LARGE_INTEGER
 
 #include <Setupapi.h> //SetupDiGetClassDevs Setup*
+#pragma comment(lib, "setupapi.lib")
 #include <initguid.h> //GUID
 #include <tchar.h>    //_T
 
@@ -46,6 +47,8 @@ bool enumDetailsSerialPorts(vector<SerialPortInfo> &portInfoList)
 
     std::string strFriendlyName;
     std::string strPortName;
+    std::string strhardwareid;
+    std::string strmanufactor;
 
     HDEVINFO hDevInfo = INVALID_HANDLE_VALUE;
 
@@ -76,19 +79,31 @@ bool enumDetailsSerialPorts(vector<SerialPortInfo> &portInfoList)
             TCHAR fname[256];
             SetupDiGetDeviceRegistryProperty(hDevInfo, &devInfoData, SPDRP_FRIENDLYNAME, NULL, (PBYTE)fname,
                                              sizeof(fname), NULL);
+            TCHAR hwid[256];
+            SetupDiGetDeviceRegistryProperty(hDevInfo, &devInfoData, SPDRP_HARDWAREID, NULL, (PBYTE)hwid,
+                                             sizeof(hwid), NULL);
+            TCHAR mfg[256];
+            SetupDiGetDeviceRegistryProperty(hDevInfo, &devInfoData, SPDRP_MFG, NULL, (PBYTE)mfg, sizeof(mfg),
+                                             NULL);
 
 #ifdef UNICODE
             strPortName = wstringToString(portName);
             strFriendlyName = wstringToString(fname);
+            strhardwareid = wstringToString(hwid);
+            strmanufactor = wstringToString(mfg);
 #else
             strPortName = std::string(portName);
             strFriendlyName = std::string(fname);
+            strhardwareid = std::string(hwid);
+            strmanufactor = std::string(mfg);
 #endif
             // remove (COMxx)
             strFriendlyName = strFriendlyName.substr(0, strFriendlyName.find(("(COM")));
 
             m_serialPortInfo.portName = strPortName;
             m_serialPortInfo.description = strFriendlyName;
+            m_serialPortInfo.hardwareId = strhardwareid;
+            m_serialPortInfo.manufactor = strmanufactor;
             portInfoList.push_back(m_serialPortInfo);
         }
 

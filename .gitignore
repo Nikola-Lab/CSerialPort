@@ -66,3 +66,7 @@
 /lib/Windows/VC12/libcserialport/libcserialport/*
 /lib/Windows/VC12/libcserialport/libcserialport/*.user
 /Demo/Comm/*.suo
+/out/build/x64-Debug (默认值)
+/.vs
+/examples/CommDLL/.vs/Comm/v16
+/examples/CommDLL/Comm/Debug
